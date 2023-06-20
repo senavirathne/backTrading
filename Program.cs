@@ -28,86 +28,116 @@
 //     }
 // }
 
-// namespace backTrading;
-//
-// class Program
-// {
-//     static async Task Main(string[] args)
-//     {
-//         var webSocketConnection = new WebSocketConnection();
-//         await webSocketConnection.Connect("wss://data.tradingview.com/socket.io/websocket");
-//     }
-// }
-// working 
 
-using System;
-using WebSocket4Net;
-using System.IO;
-using ErrorEventArgs = SuperSocket.ClientEngine.ErrorEventArgs;
-using System.Text.RegularExpressions;
-
+using backTrading;
 class Program
 {
     static void Main(string[] args)
     {
-        WebSocket websocket = new WebSocket("wss://data.tradingview.com/socket.io/websocket");
-
-        websocket.Opened += new EventHandler(websocket_Opened!);
-        websocket.Error += new EventHandler<ErrorEventArgs>(websocket_Error!);
-        websocket.Closed += new EventHandler(websocket_Closed!);
-        websocket.MessageReceived += new EventHandler<MessageReceivedEventArgs>(websocket_MessageReceived!);
-
-        websocket.Open();
+        var dataStream = new DataStream("wss://data.tradingview.com/socket.io/websocket");
+        dataStream.Connect();
 
         Console.ReadKey();
     }
-
-    private static void websocket_Opened(object? sender, EventArgs e)
-    {
-        Console.WriteLine("Websocket opened");
-        var ws = sender as WebSocket;
-
-        string[] messages =
-        {
-            "~m~52~m~{\"m\":\"quote_create_session\",\"p\":[\"qs_sL59AhMR2rv8\"]}",
-            "~m~432~m~{\"m\":\"quote_set_fields\",\"p\":[\"qs_sL59AhMR2rv8\",\"base-currency-logoid\",\"ch\",\"chp\",\"currency-logoid\",\"currency_code\",\"currency_id\",\"base_currency_id\",\"current_session\",\"description\",\"exchange\",\"format\",\"fractional\",\"is_tradable\",\"language\",\"local_description\",\"listed_exchange\",\"logoid\",\"lp\",\"lp_time\",\"minmov\",\"minmove2\",\"original_name\",\"pricescale\",\"pro_name\",\"short_name\",\"type\",\"typespecs\",\"update_mode\",\"volume\",\"value_unit_id\"]}",
-            "~m~63~m~{\"m\":\"quote_add_symbols\",\"p\":[\"qs_sL59AhMR2rv8\",\"NASDAQ:TSLA\"]}",
-            // "~m~64~m~{\"m\":\"quote_fast_symbols\",\"p\":[\"qs_sL59AhMR2rv8\",\"NASDAQ:TSLA\"]}"
-        };
-
-        foreach (var message in messages)
-        {
-            ws.Send(message);
-        }
-    }
-
-    private static void websocket_Error(object? sender, ErrorEventArgs e)
-    {
-        Console.WriteLine("Process terminated: " + e.Exception.Message);
-    }
-
-    private static void websocket_Closed(object? sender, EventArgs e)
-    {
-        Console.WriteLine("Process closed");
-    }
-
-    private static void websocket_MessageReceived(object? sender, MessageReceivedEventArgs e)
-    {
-        using (StreamWriter file = new StreamWriter("../../../websocket_messages.txt", true))
-        {
-            file.WriteLine(e.Message);
-        }
-
-        if (!IsMatchingFormat(e.Message)) return;
-        var ws = sender as WebSocket;
-        Console.WriteLine(e.Message);
-        ws.Send(e.Message); // Send the message back to the WebSocket server
-    }
-
-    private static bool IsMatchingFormat(string message)
-    {
-        string pattern = @"~m~\d+~m~~h~\d+";
-        return Regex.IsMatch(message, pattern);
-    }
 }
-// working
+
+
+//alpaca real time data 
+
+
+// namespace backTrading;
+// using System;
+// using Alpaca.Markets;
+// using System.Threading.Tasks;
+
+// internal sealed class Program
+// {
+//     private const String API_KEY = "PKXDVBHQ4XQ1GWK8PLZE";
+//
+//     private const String API_SECRET = "W3f9YbbdauysqDImTTdkUOyhY4VX4jDHW8Ofp07n";
+
+// real time 1min bars
+
+    // public static async Task Main()
+    // {
+    //     var client = Environments.Paper.GetAlpacaDataStreamingClient(new SecretKey(API_KEY, API_SECRET));
+    //
+    //     await client.ConnectAndAuthenticateAsync();
+    //
+    //     String symbol = "TSLA";
+    //
+    //     var barSubscription = client.GetMinuteBarSubscription(symbol);
+    //     barSubscription.Received += (bar) => { Console.WriteLine(bar); };
+    //
+    //     await client.SubscribeAsync(barSubscription);
+    //
+    //     // Add a delay or use a different mechanism to keep the program running
+    //     await Task.Delay(Timeout.Infinite);
+    // }
+
+//}}
+
+//alpaca historical data working
+// using Alpaca.Markets;
+// namespace backTrading;
+//
+// internal sealed class Program
+// {
+//     private const String API_KEY = "PKXDVBHQ4XQ1GWK8PLZE";
+//
+//     private const String API_SECRET = "W3f9YbbdauysqDImTTdkUOyhY4VX4jDHW8Ofp07n";
+//
+// //
+//     public static async Task Main()
+//     {
+//         var client = Environments.Paper.GetAlpacaDataClient(new SecretKey(API_KEY, API_SECRET));
+//
+//         string symbol = "TSLA"; // Use "TSLA" for Tesla stock
+//         DateTime start = DateTime.Today.AddDays(-4); // Yesterday
+//         DateTime end = DateTime.Today; // Today
+//         var timeframe = BarTimeFrame.Minute; // Denotes 1-minute bars
+//
+//         var bars = await client.ListHistoricalBarsAsync(
+//             new HistoricalBarsRequest(symbol, start, end, timeframe));
+//
+//         Console.WriteLine(bars);
+//     }
+// }
+
+
+
+
+
+//final alpaca
+// alpaca real time data
+
+// alpaca real time data 
+// namespace backTrading;
+// using System;
+// using Alpaca.Markets;
+// using System.Threading.Tasks;
+// public class Program
+// {
+//     private const String API_KEY = "PKXDVBHQ4XQ1GWK8PLZE";
+//     private const String API_SECRET = "W3f9YbbdauysqDImTTdkUOyhY4VX4jDHW8Ofp07n";
+//     public static async Task Main()
+//     {
+//         var client = Environments.Paper.GetAlpacaDataStreamingClient(new SecretKey(API_KEY, API_SECRET));
+//
+//         await client.ConnectAndAuthenticateAsync();
+//
+//         String symbol = "TSLA";
+//
+//         var tradeSubscriber = new TradeSubscriber(client, symbol);
+//         // var quoteSubscriber = new QuoteSubscriber(client, symbol);
+//
+//         await tradeSubscriber.Subscribe();
+//         // await quoteSubscriber.Subscribe();
+//
+//         // Add a delay or use a different mechanism to keep the program running
+//         await Task.Delay(Timeout.Infinite);
+//     }
+// }
+//     
+//     
+//
